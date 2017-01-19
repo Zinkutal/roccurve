@@ -1,6 +1,5 @@
 package sample;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,12 +15,14 @@ public class Controller
     private static final int _iterationCount = 10000;
     private static final double _alpha = 0.01;
 
-    private static final int TARGET_CLASS = 1;
+    private static final int TARGET_CLASS = 1; // [1;3]
 
     private double[] thetas = new double[4];
 
     private void ReadData()
     {
+        if(TARGET_CLASS > 3 || TARGET_CLASS < 1) throw new IllegalArgumentException("TARGET_CLASS must be more than 0 and less than 4 !!!!1!11");
+
         String csvFile = "iris.csv";
         String line = "";
         String cvsSplitBy = ",";
@@ -96,12 +97,12 @@ public class Controller
 
     }
 
-    public final LinkedList<Point> Classify() {
+    public final LinkedList<javafx.util.Pair<Double, Double>> Classify() {
         this.ReadData();
         this.TrainRegression();
-        LinkedList<Point> result = new LinkedList<>();
+        LinkedList<javafx.util.Pair<Double, Double>> result = new LinkedList<>();
 
-        for (double threshhold = 0.0; (threshhold <= 1.0); threshhold += 0.0001) {
+        for (double threshhold = 0.0; (threshhold <= 1.0); threshhold += 0.001) {
 
             double TPR = 0;
             double FPR = 0;
@@ -125,9 +126,10 @@ public class Controller
 
             TPR /= p;
             FPR /= n;
+            //Point point = new Point(1,1);
+            result.addLast(new javafx.util.Pair<>(FPR, TPR));
 
-            result.addLast(new Point((int)(FPR * 100), (int)(TPR * 100)));
-
+            //System.out.println("fpr = " + FPR + "; tpr = " + TPR);
         }
 
         return result;
